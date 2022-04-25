@@ -1,0 +1,26 @@
+body {
+    margin: 0;
+    background-color: #b6b6b6;
+    box-sizing: border-box;
+}
+
+.ui {
+    background-color: #3283fc;
+    padding: 20px;
+    border-bottom: 1px solid #000000;
+}
+
+.square {
+    height: 7px;
+    width: 10px;
+    border: 1px solid #000000;
+}
+
+.square.alive {
+    background-color: #d2e00f;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
