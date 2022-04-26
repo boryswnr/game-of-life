@@ -11,11 +11,15 @@ function gameInit(size) {
     // console.log("state of game", gameBoard.stateOfGame);
     // console.log("type of state of game[0]", typeof(gameBoard.stateOfGame[0]));
     // console.log("type of state of game[1]", gameBoard.stateOfGame[1]);
-    gameBoard.stateOfGame[0].classList.add("alive");
+    // gameBoard.stateOfGame[0].classList.add("alive");
     // console.log("isItAlive?:", gameBoard.isCellAlive(gameBoard.stateOfGame[0]));
     const startingSquares = [130, 180, 230, 141, 142, 143, 311, 312, 313];
     startingSquares.forEach(item => gameBoard.stateOfGame[item].classList.add("alive"));
-    // gameBoard.lifeGoesOn();
+    // const newArr = startingSquares.filter(e => 141 < e < 230);
+    // console.log("newArr", newArr);
+    gameBoard.lifeGoesOn();
+
+    // console.log("state of game index ", gameBoard.stateOfGame)
 }
 
 class GameBoard {
@@ -73,36 +77,57 @@ class GameBoard {
             Object.defineProperty(item, 'lifeAroundCell', {
                 value: 0,
                 writable: true
-            })
+            });
         })
+    }
+
+    countTheCellsAround() {
+        this.stateOfGame.forEach((item) => {
+            item.lifeAroundCell = 0;
+            let lifeAround = 0;
+            const itemsIndex = this.stateOfGame.indexOf(item);
+            // console.log("Items index:", itemsIndex);
+            const cellsAround = [itemsIndex + 1, itemsIndex - 1, itemsIndex - 51, itemsIndex - 50, itemsIndex - 49, itemsIndex + 49, itemsIndex + 50, itemsIndex + 51];
+            // console.log("cellsAround", cellsAround);
+            const whereToCheckForLife = cellsAround.filter((num) => {
+                return num >= 0 && num <= (50 * 50)-1;
+            });
+            // console.log("wheretocheckforlife:", whereToCheckForLife);
+            for (let j = 0; j < whereToCheckForLife.length; j++) {
+                if (this.isCellAlive(this.stateOfGame[whereToCheckForLife[j]])) {
+                    lifeAround += 1;
+                    // console.log("Life around:", lifeAround);
+                }
+            }
+            item.lifeAroundCell += lifeAround;
+            // console.log("item.lifeAroundCell:", item.lifeAroundCell);
+        })
+    }
+
+    seeWhoDies() {
+        this.stateOfGame.forEach((item) => {
+            const itemsIndex = this.stateOfGame.indexOf(item);
+            if (!this.isCellAlive(item) && item.lifeAroundCell === 3) {
+                item.classList.add("alive");
+                // console.log(`Cell came alive: ${item} at ${itemsIndex}`);
+            } else if (this.isCellAlive(item) && !(item.lifeAroundCell === 2 || item.lifeAroundCell === 3)) {
+                item.classList.remove("alive");
+                // console.log(`Cell died: ${item} at ${itemsIndex}`);
+            } 
+    
+        })
+
     }
 
     
     async lifeGoesOn() {
-        let lifeAround = 0;
         // TODO: finish function - first count lifeAround for ALL cells, then evaluate which dies and which survives
-        this.stateOfGame.forEach((item) => {
-            const itemsIndex = this.stateOfGame.indexOf(item);
-            // console.log("items index:", itemsIndex);
-            const whereToCheckForLife = [itemsIndex + 1, itemsIndex - 1, itemsIndex - 51, itemsIndex - 50, itemsIndex - 49, itemsIndex + 49, itemsIndex + 50, itemsIndex + 51];
-            // console.log("where to check for life:", whereToCheckForLife)
-            for (let j = 0; j < whereToCheckForLife; j++) {
-                if (this.isCellAlive(whereToCheckForLife[j])) {
-                    lifeAround += 1;
-                    console.log("Life around:", lifeAround);
-                }
-            }
+        for (let i = 0; i < 4; i++){
+            this.countTheCellsAround();
+            this.seeWhoDies();
 
-            if (!this.isCellAlive(item) && lifeAround === 3) {
-                item.classList.add("alive");
-                console.log(`Cell came alive: ${item} at ${itemsIndex}`);
-            } else if (this.isCellAlive(item) && !(lifeAround === 2 || lifeAround === 3)) {
-                item.classList.remove("alive");
-                console.log(`Cell died: ${item} at ${itemsIndex}`);
-            } 
-        })
-
-        await timeout(500);
+            await timeout(500);
+        }
     }
 
     isCellAlive(cell) {
