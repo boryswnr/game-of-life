@@ -5,21 +5,12 @@ function gameInit(size) {
     // gameWrapper.className = "game-wrapper";
 
     const gameBoard = new GameBoard(size);
-    // gameBoard.boardInit();
-    // gameBoard.squareListeners();
-    // const alive = "alive"
-    // console.log("state of game", gameBoard.stateOfGame);
-    // console.log("type of state of game[0]", typeof(gameBoard.stateOfGame[0]));
-    // console.log("type of state of game[1]", gameBoard.stateOfGame[1]);
-    // gameBoard.stateOfGame[0].classList.add("alive");
-    // console.log("isItAlive?:", gameBoard.isCellAlive(gameBoard.stateOfGame[0]));
     const startingSquares = [130, 180, 230, 141, 142, 143, 311, 312, 313];
     startingSquares.forEach(item => gameBoard.stateOfGame[item].classList.add("alive"));
-    // const newArr = startingSquares.filter(e => 141 < e < 230);
-    // console.log("newArr", newArr);
-    gameBoard.lifeGoesOn();
 
-    // console.log("state of game index ", gameBoard.stateOfGame)
+    // gameBoard.lifeGoesOn();
+
+   
 }
 
 class GameBoard {
@@ -27,6 +18,7 @@ class GameBoard {
         this.gameBoardSize = gameBoardSize;
         this.stateOfGame = [];
         this.startBtn = document.querySelector(".btn");
+        this.playOrPause = "pause";
         this.boardInit();
         this.squareListeners();
         this.startBtnListener();
@@ -43,7 +35,6 @@ class GameBoard {
             for (let j = 0; j < this.gameBoardSize; j++) {
                 const cell = document.createElement("div");
                 cell.className = "square";
-                // cell.setAttribute("id", `column-${j}`);
                 row.appendChild(cell);
             }
 
@@ -66,10 +57,18 @@ class GameBoard {
         console.log("btn listener initialized.")
         this.startBtn.addEventListener("click", () => {
             this.startBtn.classList.toggle("active");
+            if (this.startBtn.classList.contains("active")) {
+                this.startBtn.innerText = "STOP";
+                this.playOrPause = "play";
+                console.log("play or pause:", this.playOrPause);
+                this.lifeGoesOn();
+            } else {
+                this.startBtn.innerText = "START";
+                this.playOrPause = "pause";
+                console.log("play or pause:", this.playOrPause);
+            }
         })
-        while (this.startBtn.classList.contains("active")) {
-            this.lifeGoesOn();
-        }
+        
     }
 
     addLifeAroundProperty() {
@@ -86,21 +85,17 @@ class GameBoard {
             item.lifeAroundCell = 0;
             let lifeAround = 0;
             const itemsIndex = this.stateOfGame.indexOf(item);
-            // console.log("Items index:", itemsIndex);
             const cellsAround = [itemsIndex + 1, itemsIndex - 1, itemsIndex - 51, itemsIndex - 50, itemsIndex - 49, itemsIndex + 49, itemsIndex + 50, itemsIndex + 51];
-            // console.log("cellsAround", cellsAround);
             const whereToCheckForLife = cellsAround.filter((num) => {
                 return num >= 0 && num <= (50 * 50)-1;
             });
-            // console.log("wheretocheckforlife:", whereToCheckForLife);
+            
             for (let j = 0; j < whereToCheckForLife.length; j++) {
                 if (this.isCellAlive(this.stateOfGame[whereToCheckForLife[j]])) {
                     lifeAround += 1;
-                    // console.log("Life around:", lifeAround);
                 }
             }
             item.lifeAroundCell += lifeAround;
-            // console.log("item.lifeAroundCell:", item.lifeAroundCell);
         })
     }
 
@@ -109,10 +104,8 @@ class GameBoard {
             const itemsIndex = this.stateOfGame.indexOf(item);
             if (!this.isCellAlive(item) && item.lifeAroundCell === 3) {
                 item.classList.add("alive");
-                // console.log(`Cell came alive: ${item} at ${itemsIndex}`);
             } else if (this.isCellAlive(item) && !(item.lifeAroundCell === 2 || item.lifeAroundCell === 3)) {
                 item.classList.remove("alive");
-                // console.log(`Cell died: ${item} at ${itemsIndex}`);
             } 
     
         })
@@ -121,8 +114,8 @@ class GameBoard {
 
     
     async lifeGoesOn() {
-        // TODO: finish function - first count lifeAround for ALL cells, then evaluate which dies and which survives
-        for (let i = 0; i < 4; i++){
+        // for (let i = 0; i < 4; i++){
+        while (this.playOrPause === "play"){
             this.countTheCellsAround();
             this.seeWhoDies();
 
