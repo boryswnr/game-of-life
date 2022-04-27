@@ -7,17 +7,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>game of life</title>
     <link rel="stylesheet" href="./styles/styles.css">
+    <link rel="stylesheet" href="styles/slider.css">
 </head>
 
 <body>
     <header class="ui">
         <!-- WORK IN PROGRESS -->
-        <!-- <form action="" method="post" id="the-form">
-            <label for="size">Playing field size:</label>
-            <input type="number" id="size" min="10" max="100">
-            <input type="submit" value="submit" id="submit-btn">
-        </form> -->
+        <div class="flex-container">
 
+            <form action="" method="post" id="the-form">
+                <label for="size">Playing field size:</label>
+                <input type="number" id="size" min="10" max="100" value="50">
+                <input type="button" value="submit" id="submit-btn" onclick="getTheSize()">
+            </form>
+            <div class="slidecontainer">
+                <label for="speed">Speed:</label>
+                <input type="range" class="slider" value="7" id="speed" min="1" max="12">
+            </div>
+
+        </div>
         <button class="btn">START</button>
 
     </header>

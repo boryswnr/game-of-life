@@ -1,13 +1,32 @@
 const timeout = async time => await new Promise(resolve => setTimeout(() => resolve(), time));
+const sizeForm = document.getElementById('size');
+
+function getTheSize() {
+    if (isNaN(parseInt(sizeForm.value)) || sizeForm.value < 10 || sizeForm.value > 100) {
+        return alert("Wrong value entered. Board size should be a number between 10 and 100");
+    }
+    gameInit(sizeForm.value);
+}
 
 function gameInit(size) {
- const gameBoard = new GameBoard(size);   
+    const gameBoard = new GameBoard(size);   
     if (size === 50) {
         
         const startingSquares = [130, 180, 230, 141, 142, 143, 311, 312, 313, 401, 452, 500, 501, 502, 520, 521, 522, 569, 570, 571, 343, 342, 392, 443, 394, 0, 1, 50, 51, 102, 103, 152, 153, 8, 9, 58, 59, 2025, 2026, 2027, 2031, 2032, 2033, 2078, 2080, 2128, 2130, 2178, 2180, 1925, 1926, 1927, 1931, 1932, 1933, 1675, 1676, 1677, 1683, 1681, 1682, 1778, 1828, 1878, 1780, 1830, 1880, 1773, 1823, 1873, 2073, 2123, 2173, 2085, 2135, 2185, 2277, 2276, 2275, 2281, 2282, 2283, 1885, 1835, 1785];
         startingSquares.forEach(item => gameBoard.stateOfGame[item].classList.add("alive"));
 
     }
+    
+    const slider = document.getElementById("speed");
+    slider.oninput = () => {
+        if (slider.value === 11) {
+            gameBoard.timeoutRate = 50;
+        } else if (slider.value === 12) {
+            gameBoard.timeoutRate = 20;
+        }
+        gameBoard.timeoutRate = slider.value * 100;
+    }
+    
 
    
 }
@@ -18,6 +37,7 @@ class GameBoard {
         this.stateOfGame = [];
         this.startBtn = document.querySelector(".btn");
         this.playOrPause = "pause";
+        this.timeoutRate = 500;
         this.boardInit();
         this.squareListeners();
         this.startBtnListener();
@@ -58,6 +78,11 @@ class GameBoard {
 
     startBtnListener() {
         console.log("btn listener initialized.")
+        if (this.startBtn.classList.contains("active")) {
+            this.startBtn.classList.remove("acitve");
+            this.startBtn.innerText = "START";
+            this.playOrPause = "pause";
+        }
         this.startBtn.addEventListener("click", () => {
             this.startBtn.classList.toggle("active");
             if (this.startBtn.classList.contains("active")) {
@@ -87,7 +112,7 @@ class GameBoard {
                             index + this.gameBoardSize, index + this.gameBoardSize + 1];
         // check if cell is on the left border of the board
         // if yes, delete cells to the left from it from checking for life there
-        if (index % this.gameBoardSize === 0) {
+        if (index % this.gameBoardSize === 0 || index === 0) {
                 cellsAround = cellsAround.filter(num => {
                     return num !== index - 1 && num !== index - this.gameBoardSize - 1 && num !== index + this.gameBoardSize - 1;
                 })
@@ -143,7 +168,7 @@ class GameBoard {
             this.countLifeAround();
             this.seeWhoDies();
 
-            await timeout(200);
+            await timeout(this.timeoutRate);
         }
     }
 
