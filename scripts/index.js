@@ -1,16 +1,6 @@
 const timeout = async time => await new Promise(resolve => setTimeout(() => resolve(), time));
-const form = document.getElementById('submit-btn');
-function handleSubmit(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const formProps = Object.fromEntries(formData);
-    console.log("formProps:", formProps)
-}
-
 
 function gameInit(size) {
-    // const gameWrapper = document.createElement("div");
-    // gameWrapper.className = "game-wrapper";
  const gameBoard = new GameBoard(size);   
     if (size === 50) {
         
@@ -18,8 +8,6 @@ function gameInit(size) {
         startingSquares.forEach(item => gameBoard.stateOfGame[item].classList.add("alive"));
 
     }
-    
-    // form.addEventListener("submit", handleSubmit(form));
 
    
 }
