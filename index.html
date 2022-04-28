@@ -11,14 +11,17 @@
 </head>
 
 <body>
-    <header class="ui">
+    <header class="ui" id="header">
         <!-- WORK IN PROGRESS -->
         <div class="flex-container">
 
             <form action="" method="post" id="the-form">
-                <label for="size">Playing field size:</label>
-                <input type="number" id="size" min="10" max="100" value="50">
+                <label for="width">Playing field width:</label>
+                <input type="number" id="width" min="15" max="200" value="50">
+                <label for="height">Playing field height:</label>
+                <input type="number" id="height" min="15" max="200" value="50">
                 <input type="button" value="submit" id="submit-btn" onclick="getTheSize()">
+                <input type="button" value="Adjust field to window size" id="adjust-btn" onclick="adjustToScreenSize()">
             </form>
             <div class="slidecontainer">
                 <label for="speed">Speed:</label>

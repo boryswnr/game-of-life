@@ -1,21 +1,43 @@
 const timeout = async time => await new Promise(resolve => setTimeout(() => resolve(), time));
-const sizeForm = document.getElementById('size');
+const widthForm = document.getElementById('width');
+const heightForm = document.getElementById('height');
+let cellsOnWidth = 50;
+let cellsOnHeight = 50;
 
 function getTheSize() {
-    if (isNaN(parseInt(sizeForm.value)) || sizeForm.value < 10 || sizeForm.value > 100) {
-        return alert("Wrong value entered. Board size should be a number between 10 and 100");
+    if (isNaN(parseInt(heightForm.value)) || heightForm.value < 15 || heightForm.value > 200 || isNaN(parseInt(widthForm.value)) || widthForm.value < 15 || widthForm.value > 200) {
+        return alert("Wrong value entered. Board size should be a number between 15 and 200");
     }
-    gameInit(sizeForm.value);
+
+    cellsOnWidth = widthForm.value;
+    cellsOnHeight = heightForm.value;
 }
 
-function gameInit(size) {
-    const gameBoard = new GameBoard(size);   
-    if (size === 50) {
-        
-        const startingSquares = [130, 180, 230, 141, 142, 143, 311, 312, 313, 401, 452, 500, 501, 502, 520, 521, 522, 569, 570, 571, 343, 342, 392, 443, 394, 0, 1, 50, 51, 102, 103, 152, 153, 8, 9, 58, 59, 2025, 2026, 2027, 2031, 2032, 2033, 2078, 2080, 2128, 2130, 2178, 2180, 1925, 1926, 1927, 1931, 1932, 1933, 1675, 1676, 1677, 1683, 1681, 1682, 1778, 1828, 1878, 1780, 1830, 1880, 1773, 1823, 1873, 2073, 2123, 2173, 2085, 2135, 2185, 2277, 2276, 2275, 2281, 2282, 2283, 1885, 1835, 1785];
-        startingSquares.forEach(item => gameBoard.stateOfGame[item].classList.add("alive"));
+const adjustToScreenSize = () => {
+    const headerHeight = document.getElementById("header").offsetHeight
+    const screenWidth = window.innerWidth
+        || document.documentElement.clientWidth
+        || document.body.clientWidth;
 
-    }
+    const screenHeight = window.innerHeight
+        || document.documentElement.clientHeight
+        || document.body.clientHeight;
+    console.log("width x height", screenWidth, screenHeight);
+
+    cellsOnWidth = Math.floor(screenWidth / 10);
+    cellsOnHeight = Math.floor((screenHeight - headerHeight) / 10);
+    console.log("cellsOnHeight:", cellsOnHeight);
+    console.log("headerHeight:", headerHeight);
+    console.log("height", screenHeight);
+    console.log("screenHeight - headerHeight:", screenHeight - headerHeight);
+    
+}
+
+function gameInit(width, height) {
+    const adjustBtn = document.getElementById("adjust-btn");
+    const submitSizeBtn = document.getElementById("submit-btn");
+    let gameBoard = new GameBoard(width, height);   
+    
     
     const slider = document.getElementById("speed");
     slider.oninput = () => {
@@ -27,41 +49,48 @@ function gameInit(size) {
         gameBoard.timeoutRate = slider.value * 100;
     }
     
-
+    adjustBtn.addEventListener("click", () => {
+        gameBoard = new GameBoard(cellsOnWidth, cellsOnHeight);
+    })
+    
+    submitSizeBtn.addEventListener("click", () => {
+        gameBoard = new GameBoard(cellsOnWidth, cellsOnHeight);
+    })
+    
    
 }
 
 class GameBoard {
-    constructor(gameBoardSize) {
-        this.gameBoardSize = parseInt(gameBoardSize);
+    constructor(gameBoardWidth, gameBoardHeight) {
+        this.gameBoardWidth = parseInt(gameBoardWidth);
+        this.gameBoardHeight = parseInt(gameBoardHeight);
         this.stateOfGame = [];
         this.startBtn = document.querySelector(".btn");
         this.playOrPause = "pause";
         this.timeoutRate = 500;
         this.boardInit();
-        this.squareListeners();
-        this.startBtnListener();
-        this.addLifeAroundProperty();
+        this.initListeners();
+        
     }
 
     boardInit() {
-        document.getElementById("game-wrapper").innerHTML = "";
-        for (let i = 0; i < this.gameBoardSize; i++) {
+        const gameWrapper = document.getElementById("game-wrapper");
+        gameWrapper.innerHTML = "";
+        for (let i = 0; i < this.gameBoardHeight; i++) {
             const row = document.createElement("div");
             row.className = "row";
             row.setAttribute("id", `row-${i}`);
             
-            for (let j = 0; j < this.gameBoardSize; j++) {
+            for (let j = 0; j < this.gameBoardWidth; j++) {
                 const cell = document.createElement("div");
                 cell.className = "square";
                 row.appendChild(cell);
             }
-            
-            document.getElementById("game-wrapper").appendChild(row);
+            gameWrapper.appendChild(row);
         }
-        console.log("Board initialized.");
+        
     }
-
+    
     squareListeners() {
         // add listeners to each div so a player can mark which cells he wants to be alive or dead
         // pushes each field to array which keeps track of state of game
@@ -74,6 +103,20 @@ class GameBoard {
                 console.log("number:", this.stateOfGame.indexOf(item));
             })
         })
+        // below will add a sample life that evolves into Pulsar to demonstrate that game works
+        // it must be entered below squareListeners() method, so it will load on each reload
+        // in case of 50x50 board, sample life will be much more complex
+        if (this.gameBoardWidth === 50 && this.gameBoardHeight === 50) {
+            const startingSquares = [130, 180, 230, 141, 142, 143, 311, 312, 313, 401, 452, 500, 501, 502, 520, 521, 522, 569, 570, 571, 343, 342, 392, 443, 394, 0, 1, 50, 51, 102, 103, 152, 153, 8, 9, 58, 59, 2025, 2026, 2027, 2031, 2032, 2033, 2078, 2080, 2128, 2130, 2178, 2180, 1925, 1926, 1927, 1931, 1932, 1933, 1675, 1676, 1677, 1683, 1681, 1682, 1778, 1828, 1878, 1780, 1830, 1880, 1773, 1823, 1873, 2073, 2123, 2173, 2085, 2135, 2185, 2277, 2276, 2275, 2281, 2282, 2283, 1885, 1835, 1785];
+            startingSquares.forEach(item => this.stateOfGame[item].classList.add("alive"));
+        } else {
+            const firstSquare = Math.floor(this.gameBoardWidth / 2) + this.gameBoardWidth * 3;
+            const firstOfHorizontals = firstSquare + 4 * this.gameBoardWidth-3
+            const startingSquares = [firstSquare, firstSquare + this.gameBoardWidth, firstSquare + 2 * (this.gameBoardWidth), firstOfHorizontals, firstOfHorizontals+1, firstOfHorizontals+2, firstOfHorizontals+4, firstOfHorizontals+5, firstOfHorizontals+6, firstSquare + 6 * (this.gameBoardWidth), firstSquare + 7 * (this.gameBoardWidth),firstSquare + 8 * (this.gameBoardWidth)]
+            startingSquares.forEach(item => this.stateOfGame[item].classList.add("alive"));
+        }
+    
+        console.log("Board initialized.");
     }
 
     startBtnListener() {
@@ -106,26 +149,32 @@ class GameBoard {
         })
     }
 
+    initListeners() {
+        this.squareListeners();
+        this.startBtnListener();
+        this.addLifeAroundProperty();
+    }
+
     checkWhatIsaround(index) {
         // indexes of 8 cells around a cell that's positioned centrally (not on a boards border)
-        let cellsAround = [index + 1, index - 1, index - this.gameBoardSize + 1, index - this.gameBoardSize, index - this.gameBoardSize - 1, index + this.gameBoardSize - 1,
-                            index + this.gameBoardSize, index + this.gameBoardSize + 1];
+        let cellsAround = [index + 1, index - 1, index - this.gameBoardWidth + 1, index - this.gameBoardWidth, index - this.gameBoardWidth - 1, index + this.gameBoardWidth - 1,
+                            index + this.gameBoardWidth, index + this.gameBoardWidth + 1];
         // check if cell is on the left border of the board
         // if yes, delete cells to the left from it from checking for life there
-        if (index % this.gameBoardSize === 0 || index === 0) {
+        if (index % this.gameBoardWidth === 0 || index === 0) {
                 cellsAround = cellsAround.filter(num => {
-                    return num !== index - 1 && num !== index - this.gameBoardSize - 1 && num !== index + this.gameBoardSize - 1;
+                    return num !== index - 1 && num !== index - this.gameBoardWidth - 1 && num !== index + this.gameBoardWidth - 1;
                 })
         // check if cell is on the right border of the board
         // if yes, delete cells to the right from it from checking for life there
-        } else if ((index + 1) % this.gameBoardSize === 0) {
+        } else if ((index + 1) % this.gameBoardWidth === 0) {
                 cellsAround = cellsAround.filter(num => {
-                    return num !== index + 1 && num !== index - this.gameBoardSize + 1 && num !== index + this.gameBoardSize + 1;
+                    return num !== index + 1 && num !== index - this.gameBoardWidth + 1 && num !== index + this.gameBoardWidth + 1;
                 })                
         }
         // filter out negative numbers and higher than max boardSize index
         cellsAround = cellsAround.filter((num) => {
-                return num >= 0 && num <= (this.gameBoardSize * this.gameBoardSize)-1;
+                return num >= 0 && num <= (this.gameBoardWidth * this.gameBoardHeight)-1;
         });
         return cellsAround;
     }
@@ -180,4 +229,4 @@ class GameBoard {
 
 
 
-gameInit(50);
+gameInit(50, 50);
