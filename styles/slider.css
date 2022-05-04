@@ -1,5 +1,9 @@
 .slidecontainer {
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px 0 0 0;
     /* Width of the outside container */
 }
 
@@ -8,7 +12,7 @@
     -webkit-appearance: none;
     /* Override default CSS styles */
     appearance: none;
-    width: 100%;
+    width: 90%;
     /* Full-width */
     height: 25px;
     /* Specified height */
@@ -22,6 +26,7 @@
     /* 0.2 seconds transition on hover */
     transition: opacity .2s;
     direction: rtl;
+    border-radius: 15px;
 }
 
 /* Mouse-over effects */
@@ -43,6 +48,7 @@
     /* Green background */
     cursor: pointer;
     /* Cursor on hover */
+    border-radius: 50%;
 }
 
 .slider::-moz-range-thumb {
