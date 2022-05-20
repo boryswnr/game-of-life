@@ -3,12 +3,13 @@ const widthForm = document.getElementById('width');
 const heightForm = document.getElementById('height');
 let cellsOnWidth = 50;
 let cellsOnHeight = 50;
+let doWePlay = false;
 
 function getTheSize() {
     if (isNaN(parseInt(heightForm.value)) || heightForm.value < 15 || heightForm.value > 200 || isNaN(parseInt(widthForm.value)) || widthForm.value < 15 || widthForm.value > 200) {
         return alert("Wrong value entered. Board size should be a number between 15 and 200");
     }
-
+    
     cellsOnWidth = widthForm.value;
     cellsOnHeight = heightForm.value;
 }
@@ -16,12 +17,12 @@ function getTheSize() {
 const adjustToScreenSize = () => {
     const headerHeight = document.getElementById("header").offsetHeight
     const screenWidth = window.innerWidth
-        || document.documentElement.clientWidth
-        || document.body.clientWidth;
-
+    || document.documentElement.clientWidth
+    || document.body.clientWidth;
+    
     const screenHeight = window.innerHeight
-        || document.documentElement.clientHeight
-        || document.body.clientHeight;
+    || document.documentElement.clientHeight
+    || document.body.clientHeight;
     console.log("width x height", screenWidth, screenHeight);
 
     cellsOnWidth = Math.floor(screenWidth / 10);
@@ -36,6 +37,7 @@ const adjustToScreenSize = () => {
 function gameInit(width, height) {
     const adjustBtn = document.getElementById("adjust-btn");
     const submitSizeBtn = document.getElementById("submit-btn");
+    const gameUi = new TheGame;
     let gameBoard = new GameBoard(width, height);   
     
     
@@ -50,23 +52,62 @@ function gameInit(width, height) {
     }
     
     adjustBtn.addEventListener("click", () => {
-        gameBoard = new GameBoard(cellsOnWidth, cellsOnHeight);
+        adjustToScreenSize();
+        gameBoard.gameBoardWidth = parseInt(cellsOnWidth);
+        gameBoard.gameBoardHeight = parseInt(cellsOnHeight);
+        gameBoard.boardInit();
+        gameBoard.initListeners();
     })
     
     submitSizeBtn.addEventListener("click", () => {
-        gameBoard = new GameBoard(cellsOnWidth, cellsOnHeight);
+        getTheSize();
+        gameBoard.gameBoardWidth = parseInt(cellsOnWidth);
+        gameBoard.gameBoardHeight = parseInt(cellsOnHeight);
+        gameBoard.boardInit();
+        gameBoard.initListeners();
     })
     
-   
+    gameUi.startBtnListener(gameBoard.lifeGoesOn);
+
+    
 }
 
+// TODO: move constants to TheGame - btns, listeners, etc.
+// TODO: create TheGame once, on windows adjust etc. add new board to TheGame
+class TheGame {
+    constructor() {
+        this.adjustBtn = document.getElementById("adjust-btn");
+        this.startBtn = document.getElementById("start-btn");
+    }
+
+    startBtnListener(processName) {
+        console.log("btn listener initialized.")
+        if (this.startBtn.classList.contains("active")) {
+            this.startBtn.classList.remove("active");
+            this.startBtn.innerText = "START";
+            doWePlay = false;
+        }
+        this.startBtn.addEventListener("click", () => {
+            this.startBtn.classList.toggle("active");
+            if (this.startBtn.classList.contains("active")) {
+                this.startBtn.innerText = "STOP";
+                doWePlay = true;
+                processName();
+            } else {
+                this.startBtn.innerText = "START";
+                doWePlay = false;
+            }
+        })
+        
+    }
+    
+}
 class GameBoard {
     constructor(gameBoardWidth, gameBoardHeight) {
         this.gameBoardWidth = parseInt(gameBoardWidth);
         this.gameBoardHeight = parseInt(gameBoardHeight);
         this.stateOfGame = [];
-        this.startBtn = document.querySelector(".btn");
-        this.playOrPause = "pause";
+        this.startBtn = document.getElementById("start-btn");
         this.timeoutRate = 500;
         this.boardInit();
         this.initListeners();
@@ -88,7 +129,7 @@ class GameBoard {
             }
             gameWrapper.appendChild(row);
         }
-        
+        console.log("Board initialized.");
     }
     
     squareListeners() {
@@ -96,6 +137,7 @@ class GameBoard {
         // pushes each field to array which keeps track of state of game
         console.log("Square listeners initialized.")
         const gameSquares = document.querySelectorAll(".square");
+        this.stateOfGame = [];
         gameSquares.forEach(item => {
             this.stateOfGame.push(item);
             item.addEventListener("click", () => {
@@ -115,30 +157,8 @@ class GameBoard {
             const startingSquares = [firstSquare, firstSquare + this.gameBoardWidth, firstSquare + 2 * (this.gameBoardWidth), firstOfHorizontals, firstOfHorizontals+1, firstOfHorizontals+2, firstOfHorizontals+4, firstOfHorizontals+5, firstOfHorizontals+6, firstSquare + 6 * (this.gameBoardWidth), firstSquare + 7 * (this.gameBoardWidth),firstSquare + 8 * (this.gameBoardWidth)]
             startingSquares.forEach(item => this.stateOfGame[item].classList.add("alive"));
         }
-    
-        console.log("Board initialized.");
     }
 
-    startBtnListener() {
-        console.log("btn listener initialized.")
-        if (this.startBtn.classList.contains("active")) {
-            this.startBtn.classList.remove("acitve");
-            this.startBtn.innerText = "START";
-            this.playOrPause = "pause";
-        }
-        this.startBtn.addEventListener("click", () => {
-            this.startBtn.classList.toggle("active");
-            if (this.startBtn.classList.contains("active")) {
-                this.startBtn.innerText = "STOP";
-                this.playOrPause = "play";
-                this.lifeGoesOn();
-            } else {
-                this.startBtn.innerText = "START";
-                this.playOrPause = "pause";
-            }
-        })
-        
-    }
 
     addLifeAroundProperty() {
         this.stateOfGame.forEach(item => {
@@ -151,7 +171,6 @@ class GameBoard {
 
     initListeners() {
         this.squareListeners();
-        this.startBtnListener();
         this.addLifeAroundProperty();
     }
 
@@ -211,9 +230,9 @@ class GameBoard {
     }
 
     
-    async lifeGoesOn() {
+    lifeGoesOn = async () => {
         // while play button is active, the game logic runs
-        while (this.playOrPause === "play"){
+        while (doWePlay){
             this.countLifeAround();
             this.seeWhoDies();
 
