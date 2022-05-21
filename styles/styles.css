@@ -1,3 +1,7 @@
+:root {
+    --border-color: #3a3a3aa6;
+}
+
 * {
     box-sizing: border-box;
     font-family: 'Montserrat', sans-serif;
@@ -5,27 +9,37 @@
 
 body {
     margin: 0;
-    background-color: #b6b6b6;
+    background-color: #e6e6e6;
 }
 
 .ui {
-    background-color: #3283fc;
+    background-color: #7187a8;
     padding: 20px;
     border-bottom: 1px solid #000000;
     display: flex;
     justify-content: space-around;
 }
 
+.flex-container {
+    display: flex;
+    justify-content: center;
+    /* align-items: baseline; */
+}
+
+.game-wrapper {
+    border-left: 1px solid var(--border-color);
+}
+
 .square {
     height: 10px;
     width: 10px;
-    border-bottom: 1px solid #5a5a5aa6;
-    border-right: 1px solid #5a5a5aa6;
+    border-bottom: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
     transition: 100ms;
 }
 
 .square.alive {
-    background-color: #fae100;
+    background-color: #696969;
 }
 
 .row {
@@ -35,20 +49,22 @@ body {
 
 .btn {
     font-weight: 700;
-    background-color: #000000;
+    background-color: #696969;
     color: #ffffff;
-    padding: 30px 30px;
+    padding: 15px 15px;
     border-radius: 15px;
     z-index: 1;
     cursor: pointer;
     -webkit-box-shadow: 0px 0px 15px 7px #0000009c;
     box-shadow: 0px 0px 15px 3px #0000009c;
     transition: 100;
+    text-align: center;
+    line-height: 30px;
 }
 
-.btn.active {
+/* .btn.active {
     padding: 30px 34px;
-}
+} */
 
 .btn:active {
     -webkit-box-shadow: inset 0px 0px 6px 7px #7575758f;

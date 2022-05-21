@@ -9,7 +9,6 @@ function getTheSize() {
     if (isNaN(parseInt(heightForm.value)) || heightForm.value < 15 || heightForm.value > 200 || isNaN(parseInt(widthForm.value)) || widthForm.value < 15 || widthForm.value > 200) {
         return alert("Wrong value entered. Board size should be a number between 15 and 200");
     }
-    
     cellsOnWidth = widthForm.value;
     cellsOnHeight = heightForm.value;
 }
@@ -31,7 +30,6 @@ const adjustToScreenSize = () => {
     console.log("headerHeight:", headerHeight);
     console.log("height", screenHeight);
     console.log("screenHeight - headerHeight:", screenHeight - headerHeight);
-    
 }
 
 function gameInit(width, height) {
@@ -53,27 +51,17 @@ function gameInit(width, height) {
     
     adjustBtn.addEventListener("click", () => {
         adjustToScreenSize();
-        gameBoard.gameBoardWidth = parseInt(cellsOnWidth);
-        gameBoard.gameBoardHeight = parseInt(cellsOnHeight);
-        gameBoard.boardInit();
-        gameBoard.initListeners();
+        gameBoard.createNewBoard();
     })
     
     submitSizeBtn.addEventListener("click", () => {
         getTheSize();
-        gameBoard.gameBoardWidth = parseInt(cellsOnWidth);
-        gameBoard.gameBoardHeight = parseInt(cellsOnHeight);
-        gameBoard.boardInit();
-        gameBoard.initListeners();
+        gameBoard.createNewBoard();
     })
     
     gameUi.startBtnListener(gameBoard.lifeGoesOn);
-
-    
 }
 
-// TODO: move constants to TheGame - btns, listeners, etc.
-// TODO: create TheGame once, on windows adjust etc. add new board to TheGame
 class TheGame {
     constructor() {
         this.adjustBtn = document.getElementById("adjust-btn");
@@ -97,11 +85,10 @@ class TheGame {
                 this.startBtn.innerText = "START";
                 doWePlay = false;
             }
-        })
-        
-    }
-    
+        })        
+    }    
 }
+
 class GameBoard {
     constructor(gameBoardWidth, gameBoardHeight) {
         this.gameBoardWidth = parseInt(gameBoardWidth);
@@ -244,6 +231,13 @@ class GameBoard {
         return cell.classList.contains("alive");
     }
 
+
+    createNewBoard() {
+        this.gameBoardWidth = parseInt(cellsOnWidth);
+        this.gameBoardHeight = parseInt(cellsOnHeight);
+        this.boardInit();
+        this.initListeners();
+    }
 }
 
 
