@@ -11,9 +11,52 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
+    <div class="overlay-container">
+        <div class="overlay-bg">
+            <div class="overlay">
+                <i class="fa-solid fa-circle-xmark"></i>
+                <h4>Game of life</h4>
+                <p>
+                    Per <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">wikipedia:</a><br>
+                    Game of life is a cellular automaton devised by the British mathematician John Horton Conway in
+                    1970. It
+                    is a zero-player game,
+                    meaning that its evolution is determined by its initial state, requiring no further input. One
+                    interacts
+                    with the Game
+                    of Life by creating an initial configuration and observing how it evolves.
+                </p>
+                <p>
+                    Rules:
+                <ol>
+                    <li>Any live cell with fewer than two live neighbours dies, as if by underpopulation.</li>
+                    <li>Any live cell with two or three live neighbours lives on to the next generation.</li>
+                    <li>Any live cell with more than three live neighbours dies, as if by overpopulation.</li>
+                    <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+                    </li>
+                </ol>
+                In original Conway's game of life the "playing field" should be infinite. It is not a case here, because
+                the
+                target of this project was to use native JavaScript only.
+                </p>
+
+                <p>
+                    You can click on each square to toggle its status. After generating a new board, an inital life will
+                    be
+                    there to showcase the game's logic. If you generate a 50x50 board (inital on page load), the sample
+                    life
+                    generated will be a bit more complex.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <header class="ui" id="header">
 
         <div class="interface">
@@ -27,15 +70,21 @@
                 <input type="button" value="Adjust field to window size" id="adjust-btn">
             </div>
 
-            <div class="slidecontainer">
+            <div class="slider-container">
                 <label for="speed">Speed:</label>
                 <input type="range" class="slider" value="7" id="speed" min="1" max="12">
             </div>
         </div>
 
+        <div class="info-container">
+            <i class="fa-solid fa-circle-info"></i>
+        </div>
+
         <div class="btn" id="start-btn">START</div>
 
     </header>
+
+
     <div class="flex-container">
         <div class="game-wrapper" id="game-wrapper">
 

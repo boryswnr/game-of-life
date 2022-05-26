@@ -1,4 +1,19 @@
 const timeout = async time => await new Promise(resolve => setTimeout(() => resolve(), time));
+
+const infoBtn = document.querySelector(".fa-circle-info");
+const overlayBg = document.querySelector(".overlay-bg");
+const closeInfoBtn = document.querySelector(".fa-circle-xmark");
+
+infoBtn.addEventListener("click", () => {
+    overlayBg.classList.toggle("visible");
+    document.body.classList.toggle("stop-scroll");
+})
+
+closeInfoBtn.addEventListener("click", () => {
+    overlayBg.classList.toggle("visible");
+    document.body.classList.toggle("stop-scroll");
+})
+
 const widthForm = document.getElementById('width');
 const heightForm = document.getElementById('height');
 let cellsOnWidth = 50;
